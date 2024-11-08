@@ -14,8 +14,6 @@
 #include <sys/types.h>
 
 int init_parent_work(void *__info, int N) {
-    // Info *parent_info = (Info *) __info;
-
     local_id line = 0;
     local_id column = 0;
 
@@ -48,37 +46,37 @@ int init_parent_work(void *__info, int N) {
     fprintf(elf, log_started_fmt, get_lamport_time(), 0, getpid(), getppid(), 0);
     fflush(elf);
 
-    // fprintf(stdout, log_started_fmt, get_lamport_time(parent_info), 0, getpid(), getppid(), 0);
-    // fflush(stdout);
+    fprintf(stdout, log_started_fmt, get_lamport_time(), 0, getpid(), getppid(), 0);
+    fflush(stdout);
   
-    // local_id child_i = 1;
-    // while (child_i < N) {
-    //     Info info = {.fork_id = 0, .N = N};
+    local_id child_i = 1;
+    while (child_i < N) {
+        Info info = {.fork_id = 0, .N = N};
 
-    //     for(int i = 0; i < 10; i++) {
-    //         for(int j = 0; j < 10; j++) {
-    //             for(int k = 0; k < 2; k++) {
-    //                 info.pm[i][j][k] = pm[i][j][k];
-    //             }
-    //         }
-    //     }
-    //     Message started_msg;
+        for(int i = 0; i < 10; i++) {
+            for(int j = 0; j < 10; j++) {
+                for(int k = 0; k < 2; k++) {
+                    info.pm[i][j][k] = pm[i][j][k];
+                }
+            }
+        }
+        Message started_msg;
 
-    //     receive(&info, child_i, &started_msg);
-    //     if (started_msg.s_header.s_type == STARTED && started_msg.s_header.s_payload_len > 0) {
-    //         sync_lamport_time(parent_info, started_msg.s_header.s_local_time);
-    //         child_i++;
-    //     }
+        receive(&info, child_i, &started_msg);
+        if (started_msg.s_header.s_type == STARTED && started_msg.s_header.s_payload_len > 0) {
+            sync_lamport_time(&pipe_info, started_msg.s_header.s_local_time);
+            child_i++;
+        }
 
-    //     started_msg.s_header.s_payload_len = 0;
-    //     memset(started_msg.s_payload, '\0', sizeof(char)*MAX_PAYLOAD_LEN);
-    // }
+        started_msg.s_header.s_payload_len = 0;
+        memset(started_msg.s_payload, '\0', sizeof(char)*MAX_PAYLOAD_LEN);
+    }
 
     fprintf(elf, log_received_all_started_fmt, get_lamport_time(), 0);
     fflush(elf);
 
-    // fprintf(stdout, log_received_all_started_fmt, get_lamport_time(parent_info), 0);
-    // fflush(stdout);
+    fprintf(stdout, log_received_all_started_fmt, get_lamport_time(), 0);
+    fflush(stdout);
 
     return 0;
 }
@@ -87,38 +85,38 @@ void do_parent_work(void *__info, int N) {
     Info *parent_info = (Info *) __info;
     bank_robbery(parent_info, N - 1);
 
-    // Message stop_msg;
-    // char message[MAX_PAYLOAD_LEN];
+    Message stop_msg;
+    char message[MAX_PAYLOAD_LEN];
     
-    // sprintf(message, "STOP children\n");
-    // memset(stop_msg.s_payload, '\0', sizeof(char)*(MAX_PAYLOAD_LEN));
-    // memcpy(stop_msg.s_payload, message, sizeof(char)*(MAX_PAYLOAD_LEN));
+    sprintf(message, "STOP children\n");
+    memset(stop_msg.s_payload, '\0', sizeof(char)*(MAX_PAYLOAD_LEN));
+    memcpy(stop_msg.s_payload, message, sizeof(char)*(MAX_PAYLOAD_LEN));
 
-    // parent_info->local_time++;
+    parent_info->local_time++;
 
-    // stop_msg.s_header.s_magic = MESSAGE_MAGIC;
-    // stop_msg.s_header.s_payload_len = MAX_PAYLOAD_LEN + 1;
-    // stop_msg.s_header.s_type = STOP;
-    // stop_msg.s_header.s_local_time = parent_info->local_time;
+    stop_msg.s_header.s_magic = MESSAGE_MAGIC;
+    stop_msg.s_header.s_payload_len = MAX_PAYLOAD_LEN + 1;
+    stop_msg.s_header.s_type = STOP;
+    stop_msg.s_header.s_local_time = parent_info->local_time;
 
-    // send_multicast(parent_info, &stop_msg);
+    send_multicast(parent_info, &stop_msg);
 
-    // local_id child_i = 1;
-    // while (child_i < N) {
-    //     Message receive_msg;
-    //     receive(parent_info, child_i, &receive_msg);
-    //     sync_lamport_time(parent_info, receive_msg.s_header.s_local_time);
+    local_id child_i = 1;
+    while (child_i < N) {
+        Message receive_msg;
+        receive(parent_info, child_i, &receive_msg);
+        sync_lamport_time(parent_info, receive_msg.s_header.s_local_time);
 
-    //     if (receive_msg.s_header.s_type == DONE && receive_msg.s_header.s_payload_len > 0) {
-    //         fprintf(elf, "Stop parent message from %d with payload: %s\n", child_i, receive_msg.s_payload);
-    //         fflush(elf);
-    //         child_i++;
-    //     }
+        if (receive_msg.s_header.s_type == DONE && receive_msg.s_header.s_payload_len > 0) {
+            fprintf(elf, "Stop parent message from %d with payload: %s\n", child_i, receive_msg.s_payload);
+            fflush(elf);
+            child_i++;
+        }
 
-    //     receive_msg.s_header.s_payload_len = 0;
-    //     receive_msg.s_header.s_type = 0;
-    //     memset(receive_msg.s_payload, '\0', sizeof(char)*MAX_PAYLOAD_LEN);
-    // }
+        receive_msg.s_header.s_payload_len = 0;
+        receive_msg.s_header.s_type = 0;
+        memset(receive_msg.s_payload, '\0', sizeof(char)*MAX_PAYLOAD_LEN);
+    }
 
     fprintf(elf, log_received_all_done_fmt, get_lamport_time(), 0);
     fflush(elf);
@@ -150,8 +148,8 @@ void print_history_from_all_children(void *__info, int N) {
             msg_hs.s_header.s_type = 0;
             memset(msg_hs.s_payload, '\0', sizeof(char)*MAX_PAYLOAD_LEN);
         } else {
-            // fprintf(elf, "Debug with payload: %s\n", msg_hs.s_payload);
-            // fflush(elf);
+            fprintf(elf, "Debug with payload: %s\n", msg_hs.s_payload);
+            fflush(elf);
         }
     }
     

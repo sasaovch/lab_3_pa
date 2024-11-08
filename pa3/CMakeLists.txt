@@ -13,23 +13,13 @@ add_executable(pa3
     ${CMAKE_CURRENT_SOURCE_DIR}/bank_robbery.c
     ${CMAKE_CURRENT_SOURCE_DIR}/banking_work.c
     ${CMAKE_CURRENT_SOURCE_DIR}/time_work.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/banking.h
-    # ${CMAKE_CURRENT_SOURCE_DIR}/child_work.h
-    # ${CMAKE_CURRENT_SOURCE_DIR}/common.h
-    # ${CMAKE_CURRENT_SOURCE_DIR}/ipc.h
     ${CMAKE_CURRENT_SOURCE_DIR}/pa2345.h
-    # ${CMAKE_CURRENT_SOURCE_DIR}/parent_work.h
-    # ${CMAKE_CURRENT_SOURCE_DIR}/pipes_const.h
     ${CMAKE_CURRENT_SOURCE_DIR}/pipes_const.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/work_with_pipes.h
-
 )
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    # 64 bits
     set(RUNTIME_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib64 CACHE PATH "Runtime library path")
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-    # 32 bits
     set(RUNTIME_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib32 CACHE PATH "Runtime library path")
 endif()
 

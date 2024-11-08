@@ -52,10 +52,10 @@ int receive_any(void * self, Message * msg) {
         for (int from = 0; from < info->N; from++) {
             if (from != process_id) {
                 if (read(pm[from][process_id][0], &msg->s_header, sizeof(MessageHeader)) > 0) {
-                    // printf("Read\n");
+
                     if (msg->s_header.s_payload_len > 0){
                         read(pm[from][process_id][0], &msg->s_payload, msg->s_header.s_payload_len);
-                        // printf("Payload %s", msg->s_payload);
+
                         return msg->s_header.s_type;
                     }
                 }

@@ -93,29 +93,12 @@ int main(int argc, char * argv[])
                         .s_balance_pending_in = 0,
                     }
                 }
-            };
-
-            fprintf(elf, "-------------------- INIT CHILD 1 %d --------------\n", number_id);
-            fflush(elf);
-
-            fprintf(stdout, "-------------------- INIT CHILD 2 %d --------------\n", number_id);
-            fflush(stdout);            
+            };       
 
             init_child_work(&child_state);
 
-            fprintf(elf, "-------------------- HANDLE CHILD 1 %d --------------\n", number_id);
-            fflush(elf);
-
-            fprintf(stdout, "-------------------- HANDLE CHILD 2 %d --------------\n", number_id);
-            fflush(stdout);            
-
             handle_transfers(&child_state);
 
-            fprintf(elf, "-------------------- FINISH CHILD 1 %d --------------\n", number_id);
-            fflush(elf);
-
-            fprintf(stdout, "-------------------- FINISH CHILD 2 %d --------------\n", number_id);
-            fflush(stdout);   
             return 0;
         }
     }
@@ -132,45 +115,15 @@ int main(int argc, char * argv[])
         }
     }
 
-    fprintf(elf, "-------------------- INIT PARENT 1 %d --------------\n", number_id);
-    fflush(elf);
-
-    fprintf(stdout, "-------------------- INIT PARENT 2 %d --------------\n", number_id);
-    fflush(stdout);   
-
     init_parent_work(&pipe_info, N);
-
-    fprintf(elf, "-------------------- WORK PARENT 1 %d --------------\n", number_id);
-    fflush(elf);
-
-    fprintf(stdout, "-------------------- WORK PARENT 2 %d --------------\n", number_id);
-    fflush(stdout);   
 
     do_parent_work(&pipe_info, N);
 
-    fprintf(elf, "-------------------- HISTORY PARENT 1 %d --------------\n", number_id);
-    fflush(elf);
-
-    fprintf(stdout, "-------------------- HISTORY PARENT 2 %d --------------\n", number_id);
-    fflush(stdout);   
-
     print_history_from_all_children(&pipe_info, N);
-
-    fprintf(elf, "-------------------- WAIT PARENT 1 %d --------------\n", number_id);
-    fflush(elf);
-
-    fprintf(stdout, "-------------------- WAIT PARENT 2 %d --------------\n", number_id);
-    fflush(stdout);   
 
     parent_are_waiting(&pipe_info, N);
     
     free(array);
-
-    fprintf(elf, "-------------------- FINISH PARENT 1 %d --------------\n", number_id);
-    fflush(elf);
-
-    fprintf(stdout, "-------------------- FINISH PARENT 2 %d --------------\n", number_id);
-    fflush(stdout);   
 
     return 0;
 }

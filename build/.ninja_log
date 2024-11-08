@@ -1,10 +1,18 @@
 # ninja log v5
 3	47	1731020216383136299	CMakeFiles/pa3.dir/time_work.c.o	7f274f68fea9dd6e
-4	50	1731020216383136299	CMakeFiles/pa3.dir/pipes_const.c.o	8f7d5451828dbeb3
-3	50	1731020216387136401	CMakeFiles/pa3.dir/banking_work.c.o	e4bd4f710fce16e2
-2	50	1731020216387136401	CMakeFiles/pa3.dir/bank_robbery.c.o	4d9169cf54e04869
-2	53	1731020216391136504	CMakeFiles/pa3.dir/work_with_pipes.c.o	af6dc7cbe26df94b
 2	59	1731020216399136709	CMakeFiles/pa3.dir/parent_work.c.o	7f3bf46572210adc
+2	50	1731020216387136401	CMakeFiles/pa3.dir/bank_robbery.c.o	4d9169cf54e04869
 1	62	1731020216399136709	CMakeFiles/pa3.dir/pa23.c.o	4e9869c1ba193e21
+3	50	1731020216387136401	CMakeFiles/pa3.dir/banking_work.c.o	e4bd4f710fce16e2
+4	50	1731020216383136299	CMakeFiles/pa3.dir/pipes_const.c.o	8f7d5451828dbeb3
+2	53	1731020216391136504	CMakeFiles/pa3.dir/work_with_pipes.c.o	af6dc7cbe26df94b
 2	66	1731020216403136812	CMakeFiles/pa3.dir/child_work.c.o	7f664cd032197f1a
 66	104	1731020216443137839	pa3	3c69e14e8674ead6
+4	88	1731080666168212556	CMakeFiles/pa3.dir/pipes_const.c.o	8f7d5451828dbeb3
+2	95	1731080666176212380	CMakeFiles/pa3.dir/pa23.c.o	4e9869c1ba193e21
+3	95	1731080666176212380	CMakeFiles/pa3.dir/banking_work.c.o	e4bd4f710fce16e2
+3	95	1731080666176212380	CMakeFiles/pa3.dir/parent_work.c.o	7f3bf46572210adc
+3	95	1731080666176212380	CMakeFiles/pa3.dir/work_with_pipes.c.o	af6dc7cbe26df94b
+4	96	1731080666176212380	CMakeFiles/pa3.dir/time_work.c.o	7f274f68fea9dd6e
+3	99	1731080666180212291	CMakeFiles/pa3.dir/child_work.c.o	7f664cd032197f1a
+99	143	1731080666224211321	pa3	3c69e14e8674ead6

@@ -18,6 +18,5 @@ extern FILE *plf;
 extern Info pipe_info;
 
 extern int pm[10][10][2];
-// Message new_message_contructor(MessageType msg_type);
 
 #endif

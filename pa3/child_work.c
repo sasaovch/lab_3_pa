@@ -21,13 +21,7 @@ int init_child_work(void* __child_state) {
 
     ChildState* child_state = (ChildState *) __child_state;
     local_id child_id = child_state->fork_id;
-    int N = child_state->N;
-
-    fprintf(elf, "-------------------- IN INIT CHILD 1 %d --------------\n", child_id);
-    fflush(elf);
-
-    fprintf(stdout, "-------------------- IN INIT CHILD 2 %d --------------\n", child_id);
-    fflush(stdout);                
+    int N = child_state->N;        
 
     pipe_info.fork_id = child_id;
     pipe_info.N = N;
@@ -40,15 +34,6 @@ int init_child_work(void* __child_state) {
             }
         }
     }
-
-    // Info child_info = {.fork_id = child_id, .N = N, .local_time = child_state->child_time };
-    // for(int i = 0; i < 10; i++) {
-    //     for(int j = 0; j < 10; j++) {
-    //         for(int k = 0; k < 2; k++) {
-    //             child_info.pm[i][j][k] = pm[i][j][k];
-    //         }
-    //     }
-    // }
 
     timestamp_t time_started = get_lamport_time();
 
@@ -87,12 +72,6 @@ int init_child_work(void* __child_state) {
         line++;
     }
 
-    fprintf(elf, "-------------------- CLOSED PIPES 1 %d --------------\n", child_id);
-    fflush(elf);
-
-    fprintf(stdout, "-------------------- CLOSED PIPES 2 %d --------------\n", child_id);
-    fflush(stdout);                    
-
     Message start_msg;
     char start_message[MAX_PAYLOAD_LEN];
     
@@ -105,53 +84,27 @@ int init_child_work(void* __child_state) {
     start_msg.s_header.s_magic = MESSAGE_MAGIC;
     start_msg.s_header.s_payload_len = MAX_PAYLOAD_LEN + 1;
     start_msg.s_header.s_type = STARTED;
-
-    fprintf(elf, "-------------------- BEFORE TIME 1 %d --------------\n", child_id);
-    fflush(elf);
-
-    fprintf(stdout, "-------------------- BEFORE TIME 2 %d --------------\n", child_id);
-    fflush(stdout);
     start_msg.s_header.s_local_time = get_lamport_time();
 
-    fprintf(elf, "-------------------- AFTER TIME 1 %d --------------\n", child_id);
-    fflush(elf);
-
-    fprintf(stdout, "-------------------- AFTER TIME 2 %d --------------\n", child_id);
-    fflush(stdout);    
-
-    // send_multicast(&pipe_info, &start_msg);
-
-    fprintf(elf, "-------------------- SENT START 1 %d --------------\n", child_id);
-    fflush(elf);
-
-    fprintf(stdout, "-------------------- SENT START 2 %d --------------\n", child_id);
-    fflush(stdout);
+    send_multicast(&pipe_info, &start_msg);
     
-    // local_id childs = 1;
-    // while (childs < N) {
-    //     if (childs == child_id) {
-    //         childs++;
-    //         continue;
-    //     }
-    //     Message msg;
+    local_id childs = 1;
+    while (childs < N) {
+        if (childs == child_id) {
+            childs++;
+            continue;
+        }
+        Message msg;
 
-    //     receive(&pipe_info, childs, &msg);
-    //     if (msg.s_header.s_type == STARTED && msg.s_header.s_payload_len > 0) {
-    //         // printf("Child %d received payload: %s\n", child_id, msg.s_payload);
-    //         sync_lamport_time(&pipe_info, msg.s_header.s_local_time);
-    //         childs++;
-    //     }
+        receive(&pipe_info, childs, &msg);
+        if (msg.s_header.s_type == STARTED && msg.s_header.s_payload_len > 0) {
+            sync_lamport_time(&pipe_info, msg.s_header.s_local_time);
+            childs++;
+        }
 
-    //     msg.s_header.s_payload_len = 0;
-    //     memset(msg.s_payload, '\0', sizeof(char)*MAX_PAYLOAD_LEN);
-    // }
-
-    fprintf(elf, "-------------------- RECEIVED START 1 %d --------------\n", child_id);
-    fflush(elf);
-
-    fprintf(stdout, "-------------------- RECEIVED START 2 %d --------------\n", child_id);
-    fflush(stdout);    
-
+        msg.s_header.s_payload_len = 0;
+        memset(msg.s_payload, '\0', sizeof(char)*MAX_PAYLOAD_LEN);
+    }
     timestamp_t all_time = get_lamport_time();
     fprintf(elf, log_received_all_started_fmt, all_time, child_id);
     fflush(elf);
@@ -164,7 +117,6 @@ int init_child_work(void* __child_state) {
     return 0;
 }
 
-//FIXME: sasaovch
 void update_state(ChildState* child_state, int sum, timestamp_t transfer_time) {
     int current_time = child_state->child_time;
     int balance_history_len = child_state->balance_history.s_history_len;
@@ -230,20 +182,8 @@ void update_state(ChildState* child_state, int sum, timestamp_t transfer_time) {
 void transfer_handler(void* __child_state, Message* msg) {
     ChildState* child_state = (ChildState *) __child_state;
     local_id child_id = child_state->fork_id;
-    // int N = child_state->N;
-
-    // printf("Child %d wants to transfer in time %d\n", child_id, child_state->child_time);
 
     pipe_info.local_time = child_state->child_time;
-
-    // Info child_info = {.fork_id = child_id, .N = N, .local_time = child_state->child_time};
-    // for(int i = 0; i < 10; i++) {
-    //     for(int j = 0; j < 10; j++) {
-    //         for(int k = 0; k < 2; k++) {
-    //             child_info.pm[i][j][k] = pm[i][j][k];
-    //         }
-    //     }
-    // }
 
     timestamp_t transfer_time = msg->s_header.s_local_time;
     timestamp_t current_time = get_lamport_time();
@@ -253,8 +193,8 @@ void transfer_handler(void* __child_state, Message* msg) {
         fprintf(elf, log_transfer_in_fmt, current_time, order->s_dst, order->s_amount, order->s_src);
         fflush(elf);
 
-        // fprintf(stdout, log_transfer_in_fmt, current_time, order->s_dst, order->s_amount, order->s_src);
-        // fflush(stdout);
+        fprintf(stdout, log_transfer_in_fmt, current_time, order->s_dst, order->s_amount, order->s_src);
+        fflush(stdout);
 
         pipe_info.local_time++;
 
@@ -273,8 +213,8 @@ void transfer_handler(void* __child_state, Message* msg) {
         fprintf(elf,log_transfer_out_fmt, current_time, order->s_src, order->s_amount, order->s_dst);
         fflush(elf);
 
-        // fprintf(stdout,log_transfer_out_fmt, current_time, order->s_src, order->s_amount, order->s_dst);
-        // fflush(stdout);
+        fprintf(stdout,log_transfer_out_fmt, current_time, order->s_src, order->s_amount, order->s_dst);
+        fflush(stdout);
 
         printf("----- %d process %d update state in %d from %d\n", get_lamport_time(), child_id, transfer_time, order->s_amount);
         transfer(&pipe_info, order->s_src, order->s_dst, order->s_amount);
@@ -286,47 +226,33 @@ void transfer_handler(void* __child_state, Message* msg) {
 int handle_transfers(void* __child_state) {
     ChildState* child_state = (ChildState *) __child_state;
     local_id child_id = child_state->fork_id;
-    // int N = child_state->N;
+    int N = child_state->N;
     
     pipe_info.local_time = child_state->child_time;
-    // Info child_info = {.fork_id = child_id, .N = N, .local_time = child_state->child_time};
-    // for(int i = 0; i < 10; i++) {
-    //     for(int j = 0; j < 10; j++) {
-    //         for(int k = 0; k < 2; k++) {
-    //             child_info.pm[i][j][k] = pm[i][j][k];
-    //         }
-    //     }
-    // }
 
+    Message msg_r;
+    int16_t type = -1;
 
-    // Message msg_r;
-    // int16_t type = -1;
-
-    // int wait_for_others_to_stop = N - 2;
-    // printf("-------- Child %d Time before transfer %d\n", child_id, get_lamport_time());
-    // while (type != STOP) {
+    int wait_for_others_to_stop = N - 2;
+    while (type != STOP) {
         
-    //     msg_r.s_header.s_payload_len = 0;
-    //     memset(msg_r.s_payload, '\0', sizeof(char)*MAX_PAYLOAD_LEN);
+        msg_r.s_header.s_payload_len = 0;
+        memset(msg_r.s_payload, '\0', sizeof(char)*MAX_PAYLOAD_LEN);
 
-    //     pipe_info.local_time++;
-    //     type = receive_any(&pipe_info, &msg_r);
-
-    //     printf("$$$$$ %d: %d parent received time %d\n", get_lamport_time(), child_id, msg_r.s_header.s_local_time);
-    //     sync_lamport_time(&pipe_info, msg_r.s_header.s_local_time);
-    //     printf("$$$$$ %d: %d updated time\n", get_lamport_time(), child_id);
+        pipe_info.local_time++;
+        type = receive_any(&pipe_info, &msg_r);
+        sync_lamport_time(&pipe_info, msg_r.s_header.s_local_time);
         
-    //     if (type == TRANSFER) {
-    //         // printf("transfer %d\n", type);
-    //         child_state->child_time = pipe_info.local_time;
-    //         transfer_handler(child_state, &msg_r);
-    //     } else if (type == DONE) {
-    //         wait_for_others_to_stop--;
-    //     }
-    // }
+        if (type == TRANSFER) {
+            child_state->child_time = pipe_info.local_time;
+            transfer_handler(child_state, &msg_r);
+        } else if (type == DONE) {
+            wait_for_others_to_stop--;
+        }
+    }
 
-    // Message done_msg;
-    // char done_message[MAX_PAYLOAD_LEN];
+    Message done_msg;
+    char done_message[MAX_PAYLOAD_LEN];
     timestamp_t time = get_lamport_time();
 
     fprintf(elf, log_done_fmt, time, child_id, child_state->balance_history.s_history[child_state->balance_history.s_history_len - 1].s_balance);
@@ -335,38 +261,38 @@ int handle_transfers(void* __child_state) {
     fprintf(stdout, log_done_fmt, time, child_id, child_state->balance_history.s_history[child_state->balance_history.s_history_len - 1].s_balance);
     fflush(stdout);
     
-    // sprintf(done_message, log_done_fmt, time, child_id, child_state->balance_history.s_history[child_state->balance_history.s_history_len - 1].s_balance);
-    // memset(done_msg.s_payload, '\0', sizeof(char)*(MAX_PAYLOAD_LEN));
-    // memcpy(done_msg.s_payload, done_message, sizeof(char)*(MAX_PAYLOAD_LEN));
+    sprintf(done_message, log_done_fmt, time, child_id, child_state->balance_history.s_history[child_state->balance_history.s_history_len - 1].s_balance);
+    memset(done_msg.s_payload, '\0', sizeof(char)*(MAX_PAYLOAD_LEN));
+    memcpy(done_msg.s_payload, done_message, sizeof(char)*(MAX_PAYLOAD_LEN));
 
     pipe_info.local_time++;
 
-    // done_msg.s_header.s_magic = MESSAGE_MAGIC;
-    // done_msg.s_header.s_payload_len = MAX_PAYLOAD_LEN + 1;
-    // done_msg.s_header.s_type = DONE;
-    // done_msg.s_header.s_local_time = get_lamport_time();
+    done_msg.s_header.s_magic = MESSAGE_MAGIC;
+    done_msg.s_header.s_payload_len = MAX_PAYLOAD_LEN + 1;
+    done_msg.s_header.s_type = DONE;
+    done_msg.s_header.s_local_time = get_lamport_time();
 
-    // send_multicast(&pipe_info, &done_msg);
+    send_multicast(&pipe_info, &done_msg);
     
-    // Message msg_d;
-    // while (wait_for_others_to_stop > 0) {
-    //     msg_d.s_header.s_payload_len = 0;
-    //     memset(msg_d.s_payload, '\0', sizeof(char)*MAX_PAYLOAD_LEN);
+    Message msg_d;
+    while (wait_for_others_to_stop > 0) {
+        msg_d.s_header.s_payload_len = 0;
+        memset(msg_d.s_payload, '\0', sizeof(char)*MAX_PAYLOAD_LEN);
         
-    //     pipe_info.local_time++;
-    //     type = receive_any(&pipe_info, &msg_d);
-    //     sync_lamport_time(&pipe_info, msg_d.s_header.s_local_time);
-    //     if (type == DONE) {
-    //         wait_for_others_to_stop--;
-    //     }
-    // }
+        pipe_info.local_time++;
+        type = receive_any(&pipe_info, &msg_d);
+        sync_lamport_time(&pipe_info, msg_d.s_header.s_local_time);
+        if (type == DONE) {
+            wait_for_others_to_stop--;
+        }
+    }
 
     timestamp_t history_time = get_lamport_time();
     fprintf(elf, log_received_all_done_fmt, history_time, child_id);
     fflush(elf);
 
-    // fprintf(stdout, log_received_all_done_fmt, history_time, child_id);
-    // fflush(stdout);
+    fprintf(stdout, log_received_all_done_fmt, history_time, child_id);
+    fflush(stdout);
 
     pipe_info.local_time++;
     child_state->child_time = pipe_info.local_time;
