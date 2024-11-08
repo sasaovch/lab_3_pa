@@ -29,6 +29,8 @@ void transfer(void * parent_data, local_id src, local_id dst, balance_t amount) 
         },
     };
 
+    printf("--- %d: %d transfer from %d to %d amount %d\n", get_lamport_time(), transfer->ipc_id, src, dst, amount);
+
     memcpy(
         &msg_transfer.s_payload, 
         transfer,
@@ -47,11 +49,12 @@ void transfer(void * parent_data, local_id src, local_id dst, balance_t amount) 
     else {
         next_id_process = dst;
     }
-    
+    printf("Before write\n");
     if (write(writer[transfer->ipc_id][next_id_process], &msg_transfer, sizeof(MessageHeader) + msg_transfer.s_header.s_payload_len) == -1) {
         if (errno == EPIPE)
             return;
     }
+    printf("finish transfer\n");
     
     if (local.ipc_id == PARENT_ID) {
         // ACK
@@ -61,6 +64,8 @@ void transfer(void * parent_data, local_id src, local_id dst, balance_t amount) 
         if (msg_receive_trans.s_header.s_type != ACK) {
             printf("Trans is not atomarniy in proc - %u\n", local.ipc_id);
         }
+        printf("--- %d: %d parent received from %d to %d at time %d\n", get_lamport_time(), transfer->ipc_id, src, dst, msg_receive_trans.s_header.s_local_time);
         take_max_time_and_inc(&local, msg_receive_trans.s_header.s_local_time);
+        printf("--- %d: %d updated time\n", get_lamport_time(), transfer->ipc_id);
     }  
 }

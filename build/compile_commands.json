@@ -1,0 +1,38 @@
+[
+{
+  "directory": "/home/yt/Downloads/pa3/build",
+  "command": "/usr/bin/clang -g -std=gnu99 -o CMakeFiles/pa3.dir/banking.c.o -c /home/yt/Downloads/pa3/pa3/banking.c",
+  "file": "/home/yt/Downloads/pa3/pa3/banking.c",
+  "output": "CMakeFiles/pa3.dir/banking.c.o"
+},
+{
+  "directory": "/home/yt/Downloads/pa3/build",
+  "command": "/usr/bin/clang -g -std=gnu99 -o CMakeFiles/pa3.dir/bank_robbery.c.o -c /home/yt/Downloads/pa3/pa3/bank_robbery.c",
+  "file": "/home/yt/Downloads/pa3/pa3/bank_robbery.c",
+  "output": "CMakeFiles/pa3.dir/bank_robbery.c.o"
+},
+{
+  "directory": "/home/yt/Downloads/pa3/build",
+  "command": "/usr/bin/clang -g -std=gnu99 -o CMakeFiles/pa3.dir/ipc.c.o -c /home/yt/Downloads/pa3/pa3/ipc.c",
+  "file": "/home/yt/Downloads/pa3/pa3/ipc.c",
+  "output": "CMakeFiles/pa3.dir/ipc.c.o"
+},
+{
+  "directory": "/home/yt/Downloads/pa3/build",
+  "command": "/usr/bin/clang -g -std=gnu99 -o CMakeFiles/pa3.dir/log.c.o -c /home/yt/Downloads/pa3/pa3/log.c",
+  "file": "/home/yt/Downloads/pa3/pa3/log.c",
+  "output": "CMakeFiles/pa3.dir/log.c.o"
+},
+{
+  "directory": "/home/yt/Downloads/pa3/build",
+  "command": "/usr/bin/clang -g -std=gnu99 -o CMakeFiles/pa3.dir/pa23.c.o -c /home/yt/Downloads/pa3/pa3/pa23.c",
+  "file": "/home/yt/Downloads/pa3/pa3/pa23.c",
+  "output": "CMakeFiles/pa3.dir/pa23.c.o"
+},
+{
+  "directory": "/home/yt/Downloads/pa3/build",
+  "command": "/usr/bin/clang -g -std=gnu99 -o CMakeFiles/pa3.dir/time.c.o -c /home/yt/Downloads/pa3/pa3/time.c",
+  "file": "/home/yt/Downloads/pa3/pa3/time.c",
+  "output": "CMakeFiles/pa3.dir/time.c.o"
+}
+]

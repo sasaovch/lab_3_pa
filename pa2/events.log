@@ -1,0 +1,33 @@
+890682696: process 7432 (pid 890682696, parent     0) has STARTED with balance $890682416
+1453974280: process 100 received all STARTED messages
+0: process 890649376 transferred $1453963522 to process 890649424
+0: process 890649376 received $-203620351 from process 1
+100: process 0 has DONE with balance $890653680
+1453974480: process 100 received all DONE messages
+890682696: process 7433 (pid 890682696, parent     0) has STARTED with balance $890682416
+1453974280: process 100 received all STARTED messages
+0: process 890649376 received $1453963522 from process 890649424
+0: process 890649376 transferred $1453916163 to process 890649424
+100: process 0 has DONE with balance $890653680
+1453974480: process 100 received all DONE messages
+890682696: process 7434 (pid 890682696, parent     0) has STARTED with balance $890682416
+1453974280: process 100 received all STARTED messages
+0: process 890649376 received $1453963523 from process 890649424
+0: process 890649376 transferred $1453916164 to process 890649424
+100: process 0 has DONE with balance $890653680
+1453974480: process 100 received all DONE messages
+890682696: process 7435 (pid 890682696, parent     0) has STARTED with balance $890682416
+1453974280: process 100 received all STARTED messages
+0: process 890649376 received $1453963524 from process 890649424
+0: process 890649376 transferred $1453916165 to process 890649424
+100: process 0 has DONE with balance $890653680
+1453974480: process 100 received all DONE messages
+890682696: process 7436 (pid 890682696, parent     0) has STARTED with balance $890682416
+1453974280: process 100 received all STARTED messages
+0: process 890649376 received $1453963525 from process 890649424
+0: process 890649376 transferred $1453916161 to process 890649424
+100: process 0 has DONE with balance $890653680
+1453974480: process 100 received all DONE messages
+1453980624: process 7431 (pid 890682696, parent     0) has STARTED with balance $890682416
+1453974280: process 100 received all STARTED messages
+1453974480: process 100 received all DONE messages

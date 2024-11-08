@@ -1,0 +1,3 @@
+/home/yt/Downloads/pa3/build/CMakeFiles/pa3.dir
+/home/yt/Downloads/pa3/build/CMakeFiles/edit_cache.dir
+/home/yt/Downloads/pa3/build/CMakeFiles/rebuild_cache.dir

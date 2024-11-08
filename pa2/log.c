@@ -7,6 +7,11 @@
 #include "pa2345.h"
 #include "io.h"
 
+IpcLocal local;
+size_t num_processes;
+int reader[MAX_PROCESSES][MAX_PROCESSES];
+int writer[MAX_PROCESSES][MAX_PROCESSES];
+
 void flog_argsfmt(FILE* file, const char *format, va_list args) {
     if (file == NULL) {
         fprintf(stderr, error_log_message_fmt, format);

@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/pa2.dir/banking.c.o CMakeFiles/pa2.dir/bank_robbery.c.o CMakeFiles/pa2.dir/ipc.c.o CMakeFiles/pa2.dir/log.c.o CMakeFiles/pa2.dir/pa23.c.o CMakeFiles/pa2.dir/time.c.o -o pa2   -L/home/yt/Downloads/pa3/pa2/lib64  -Wl,-rpath,/home/yt/Downloads/pa3/pa2/lib64 -lruntime 

@@ -42,9 +42,12 @@ int release_cs(const void * self) {
     Message msg;
     timestamp_t max_time = 0;
 
+    printf("Try get history %d\n", all_history->s_history_len);
+
     for(size_t from = 1; from <= all_history->s_history_len; from++){
         local.local_time++;
         receive(&local, from, &msg);
+        printf("Received: %s\n", msg.s_payload);
         take_max_time_and_inc(&local, msg.s_header.s_local_time);
 
         if(msg.s_header.s_type == BALANCE_HISTORY) {
@@ -122,6 +125,7 @@ void transfer_handler(IpcLocal* self, Message* msg) {
         transfer(s_transfer, transfer_order.s_src, transfer_order.s_dst, transfer_order.s_amount);
     }
 
+    printf("----- %d process %d update state in %d from %d\n", get_lamport_time(), local.ipc_id, transfer_time, delta);
     update_state(delta, transfer_time); 
 }
 
@@ -138,6 +142,7 @@ void set_pending_in(IpcLocal* self, timestamp_t transfer_time, timestamp_t curre
 
 int main(int argc, char * argv[])
 {
+    printf("Init\n");
     size_t num_children;
 
     if (argc >= 3 && strcmp(argv[1], "-p") == 0 && strtol(argv[2], NULL, 10) == argc - 3) {
@@ -171,7 +176,7 @@ int main(int argc, char * argv[])
                     exit(2);
                 reader[source][destination] = fd[0];
                 writer[source][destination] = fd[1];
-                pipe_opened(source, destination);
+                // pipe_opened(source, destination);
             }
         }
     }
@@ -221,7 +226,9 @@ int main(int argc, char * argv[])
         Transfer msg_transfer = {
             .ipc_id = local.ipc_id,
         };
+        printf("Bank \n");
         bank_robbery(&msg_transfer, num_children);    
+        printf("ROBBERED\n");
         // Send ALL STOP         
         status = send_stop_to_all(&local);
         if (status != IPC_STATUS_SUCCESS) {
@@ -236,6 +243,8 @@ int main(int argc, char * argv[])
         AllHistory all_history = {
             .s_history_len = num_children,
         };    
+
+        printf("Finish robbery \n");
 
         status = release_cs(&all_history);
             
@@ -254,10 +263,15 @@ int main(int argc, char * argv[])
         // Main Work
         int16_t type = -1;
         local_id count_child_proc = num_children - 1;
+        printf("-------- Child %d Time before transfer %d\n", local.ipc_id, get_lamport_time());
         while (type != STOP) {
             local.local_time++;
             type = receive_any(&local, &msg);
+            
+            printf("$$$$$ %d: %d parent received time %d\n", get_lamport_time(), local.ipc_id, msg.s_header.s_local_time);
             take_max_time_and_inc(&local, msg.s_header.s_local_time);
+            printf("$$$$$ %d: %d updated time\n", get_lamport_time(), local.ipc_id);
+            
             switch (type) {
                 case TRANSFER:
                     transfer_handler(&local, &msg);                
@@ -305,9 +319,9 @@ int main(int argc, char * argv[])
             sizeof(BalanceHistory)
         );    
 
-        // for(int i = 0; i<local.balance_history.s_history_len; i++) {
-        //     printf("SENT HISTORY: len - %u; id - %u; time - %d value - %d\n", local.balance_history.s_history_len, local.ipc_id, i, local.balance_history.s_history[i].s_balance);
-        // }
+        for(int i = 0; i<local.balance_history.s_history_len; i++) {
+            printf("SENT HISTORY: len - %u; id - %u; time - %d value - %d\n", local.balance_history.s_history_len, local.ipc_id, i, local.balance_history.s_history[i].s_balance);
+        }
              
         status = send(&local, PARENT_ID, &msg_hisory);
         if (status != IPC_STATUS_SUCCESS) {

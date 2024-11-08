@@ -28,10 +28,10 @@ typedef struct {
     local_id ipc_id;
 } __attribute__((packed)) Transfer;
 
-IpcLocal local;
-size_t num_processes;
-int reader[MAX_PROCESSES][MAX_PROCESSES];
-int writer[MAX_PROCESSES][MAX_PROCESSES];
+extern IpcLocal local;
+extern size_t num_processes;
+extern int reader[MAX_PROCESSES][MAX_PROCESSES];
+extern int writer[MAX_PROCESSES][MAX_PROCESSES];
 
 int receive_from_all_children(IpcLocal* self, Message* msg, int max_count_children_proc);
 int send_started_to_all(IpcLocal* self);
