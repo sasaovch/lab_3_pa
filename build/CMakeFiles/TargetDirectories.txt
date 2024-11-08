@@ -1,0 +1,3 @@
+/home/yt/Documents/lab_3_pa/build/CMakeFiles/pa3.dir
+/home/yt/Documents/lab_3_pa/build/CMakeFiles/edit_cache.dir
+/home/yt/Documents/lab_3_pa/build/CMakeFiles/rebuild_cache.dir
