@@ -28,18 +28,14 @@ void transfer(void *data, local_id src, local_id dst, balance_t amount) {
 
     if (pipe_info.fork_id == 0) {
         Message received_message;
-        int16_t type = -1;
 
-        send_to_pipe(&pipe_info, &msg, src);
-        
+        send(&pipe_info, src, &msg);
         pipe_info.local_time++;
-        type = receive_any(&pipe_info, &received_message);
-            
-        if (received_message.s_header.s_type == ACK) {
-            sync_lamport_time(&pipe_info, received_message.s_header.s_local_time);
-        }
+
+        while (receive(&pipe_info, dst, &received_message) != 0);
+        sync_lamport_time(&pipe_info, received_message.s_header.s_local_time);
     }
     if (pipe_info.fork_id == src) {
-        send_to_pipe(&pipe_info, &msg, dst);
+        send(&pipe_info, dst, &msg);
     }
 }

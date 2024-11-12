@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 #include <fcntl.h>
 
@@ -35,13 +34,10 @@ int main(int argc, char * argv[])
     elf = fopen(events_log, "a");
     plf = fopen(pipes_log, "a");
 
-    srand(time(NULL));
-    int r = rand();        
-
-    fprintf(elf, "-------------------- VERSION 1.2.1 tag:%d --------------\n", r);
+    fprintf(elf, "-------------------- VERSION 1.5.1 --------------\n");
     fflush(elf);
 
-    fprintf(stdout, "-------------------- VERSION 1.2.2 tag:%d --------------\n", r);
+    fprintf(stdout, "-------------------- VERSION 1.5.2 --------------\n");
     fflush(stdout);
 
     local_id line = 0;
@@ -98,7 +94,7 @@ int main(int argc, char * argv[])
             init_child_work(&child_state);
 
             handle_transfers(&child_state);
-
+            
             return 0;
         }
     }
