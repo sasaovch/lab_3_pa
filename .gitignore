@@ -2,3 +2,10 @@ build/
 .vscode/
 .cache/
 pa3.tar.gz
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+events.log
+pa3
+pipes.log

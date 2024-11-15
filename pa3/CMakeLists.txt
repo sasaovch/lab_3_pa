@@ -11,7 +11,6 @@ add_executable(pa3
     ${CMAKE_CURRENT_SOURCE_DIR}/parent_work.c
     ${CMAKE_CURRENT_SOURCE_DIR}/work_with_pipes.c
     ${CMAKE_CURRENT_SOURCE_DIR}/bank_robbery.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/banking_work.c
     ${CMAKE_CURRENT_SOURCE_DIR}/time_work.c
     ${CMAKE_CURRENT_SOURCE_DIR}/pa2345.h
     ${CMAKE_CURRENT_SOURCE_DIR}/pipes_const.c

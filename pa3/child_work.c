@@ -2,7 +2,6 @@
 #include "ipc.h"
 #include "pipes_const.h"
 #include "time_work.h"
-#include "work_with_pipes.h"
 #include "common.h"
 #include "pa2345.h"
 #include "banking.h"
@@ -121,15 +120,15 @@ int init_child_work(void* __child_state) {
 
 void update_state(ChildState* child_state, int sum, timestamp_t transfer_time) {
     int current_time = child_state->child_time;
-    int balance_history_len = child_state->balance_history.s_history_len;
+    int b_h_len = child_state->balance_history.s_history_len;
 
-    if (current_time - balance_history_len > 0) {
-        balance_t past_balance = child_state->balance_history.s_history[balance_history_len - 1].s_balance;
+    if (current_time - b_h_len > 0) {
+        balance_t prev_balance = child_state->balance_history.s_history[b_h_len - 1].s_balance;
 
-        int index = balance_history_len;
+        int index = b_h_len;
         while (index < current_time) {
             child_state->balance_history.s_history[index] = (BalanceState) {
-                .s_balance = past_balance,
+                .s_balance = prev_balance,
                 .s_time = index,
                 .s_balance_pending_in = 0,
             };
@@ -146,13 +145,13 @@ void update_state(ChildState* child_state, int sum, timestamp_t transfer_time) {
         }
 
         child_state->balance_history.s_history[current_time] = (BalanceState) {
-            .s_balance = past_balance + sum,
+            .s_balance = prev_balance + sum,
             .s_time = current_time,
             .s_balance_pending_in = 0,
         };
 
         child_state->balance_history.s_history_len = current_time + 1;        
-    } else if (balance_history_len == current_time) {     
+    } else if (b_h_len == current_time) {     
         if (sum > 0) {
             if (current_time > transfer_time) {
                 for (timestamp_t time = transfer_time; time < current_time; time++) {
@@ -161,14 +160,14 @@ void update_state(ChildState* child_state, int sum, timestamp_t transfer_time) {
             }
         }
 
-        child_state->balance_history.s_history[balance_history_len] = (BalanceState) {
-            .s_balance = child_state->balance_history.s_history[balance_history_len - 1].s_balance + sum,
+        child_state->balance_history.s_history[b_h_len] = (BalanceState) {
+            .s_balance = child_state->balance_history.s_history[b_h_len - 1].s_balance + sum,
             .s_time = current_time,
             .s_balance_pending_in = 0,
         };
         
         child_state->balance_history.s_history_len++;
-    } else if (balance_history_len - current_time == 1) {
+    } else if (b_h_len - current_time == 1) {
         if (sum > 0) {
             if (current_time > transfer_time) {
                 for (timestamp_t time = transfer_time; time < current_time; time++) {
@@ -176,7 +175,7 @@ void update_state(ChildState* child_state, int sum, timestamp_t transfer_time) {
                 }
             }
         }
-        child_state->balance_history.s_history[balance_history_len - 1].s_balance += sum;
+        child_state->balance_history.s_history[b_h_len - 1].s_balance += sum;
 
     }  
 }
@@ -325,7 +324,6 @@ int handle_transfers(void* __child_state) {
     update_state(child_state, 0, history_time);
     
     Message history_msg;
-    // memset(history_msg.s_payload, '\0', sizeof(char)*(MAX_PAYLOAD_LEN));
     memcpy(history_msg.s_payload, &(child_state->balance_history), sizeof(BalanceHistory));
 
     pipe_info.local_time++;

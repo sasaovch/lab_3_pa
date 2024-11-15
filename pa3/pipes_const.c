@@ -3,7 +3,6 @@
 #include "pa2345.h"
 #include "banking.h"
 
-
 FILE *elf;
 FILE *plf;
 

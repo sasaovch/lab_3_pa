@@ -7,7 +7,6 @@
 
 int send_multicast(void *__info, const Message *msg) {
     Info *info = (Info *)__info;
-    // size_t message_size = sizeof(MessageHeader) + msg->s_header.s_payload_len;
     
     local_id iterator = 0;
     while (iterator < info->N) {
@@ -19,7 +18,6 @@ int send_multicast(void *__info, const Message *msg) {
             fflush(stdout);
             
             send(__info, iterator, msg);
-            // write(info->pm[info->fork_id][iterator][1], msg, message_size);
         }
         
         iterator++;
@@ -65,16 +63,7 @@ int receive_any(void * self, Message * msg) {
                     fflush(stdout);
                     return 0;
                 }
-                // sleep(1);
-                // if (read(pm[from][process_id][0], &msg->s_header, sizeof(MessageHeader)) > 0) {
-
-                //     // if (msg->s_header.s_payload_len > 0){
-                //     read(pm[from][process_id][0], &msg->s_payload, msg->s_header.s_payload_len);
-
-                //         // return msg->s_header.s_type;
-                //     return 0;
-                //     // }
-                // }
+                sleep(1);
             }
         }
     }
